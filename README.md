@@ -69,6 +69,7 @@
         <li>
           <a href="#prerequisites">Prerequisites</a>
           <ul>
+            <li><a href="#alpine-linux">Alpine Linux</a></li>
             <li><a href="#debian">Debian</a></li>
           </ul>
         </li>
