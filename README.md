@@ -273,7 +273,7 @@ Don't forget to give the project a star! Thanks again!
 <!-- LICENSE -->
 ## License
 
-Distributed under the GNU General Public License v3.0 (or later). See [`LICENSE`][license-url] for more information.
+Distributed under the **GNU General Public License v3.0 (or later)**. See [`LICENSE`][license-url] for more information.
 
 > :warning: The license above does not apply to the files and folders within the library `/lib` directory. Please have a look at the `LICENSE` file located in the root directory of each library to get more information.
 
