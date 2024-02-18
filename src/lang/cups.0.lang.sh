@@ -160,11 +160,12 @@ readonly L_CUPS_HLP_PAR_ARG_ACTION_PRINT="--print [<file>]"
 #-------------------------------------------------------------------------------
 #  Other parameters <arg_...>
 #-------------------------------------------------------------------------------
+readonly L_CUPS_HLP_PAR_ARG_FILE="<file>"
 
 #-------------------------------------------------------------------------------
 #  Last argument (parameter), see also <args_read()> in '/src/run.sh'
 #-------------------------------------------------------------------------------
-readonly L_CUPS_HLP_PAR_LASTARG="[<file>]"
+readonly L_CUPS_HLP_PAR_LASTARG="[${L_CUPS_HLP_PAR_ARG_FILE}]"
 
 #===============================================================================
 #  GLOBAL VARIABLES (CUSTOM)

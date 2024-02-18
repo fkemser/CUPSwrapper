@@ -33,10 +33,10 @@ readonly PIDLOCK_ENABLED="false"
 #===============================================================================
 #  INIT - DO NOT EDIT
 #===============================================================================
-#  Run repository initialisation script
+#  Run repository initialization script
 . "$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )/init.sh"              || \
 { printf "%s\n\n"                                                           \
-    "ERROR: Could not run the repository initialisation script './init.sh'. Aborting..." >&2
+    "ERROR: Could not run the repository initialization script './init.sh'. Aborting..." >&2
   return 1
 }
 
@@ -292,6 +292,12 @@ readonly T_DAEMON_SLEEP="60"
 #===============================================================================
 args_check() {
   #-----------------------------------------------------------------------------
+  #  DO NOT EDIT
+  #-----------------------------------------------------------------------------
+  # Check if selected action is compatible with the selected mode
+  lib_shtpl_arg_action_is_valid                                             && \
+
+  #-----------------------------------------------------------------------------
   #                        DONE: DEFINE YOUR CHECKS HERE
   #                   (DO NOT FORGET THE TERMINATING '|| \')
   #
@@ -299,7 +305,12 @@ args_check() {
   #                                    \|||/
   #                                     \|/
   #-----------------------------------------------------------------------------
-  true                                                                      || \
+  #-----------------------------------------------------------------------------
+  #  arg_file
+  #-----------------------------------------------------------------------------
+  if lib_core_is --set "${arg_file}"; then
+    lib_core_is --file "${arg_file}" || lib_shtpl_arg_error "arg_file"
+  fi                                                                        || \
   #-----------------------------------------------------------------------------
   #                                     /|\
   #                                    /|||\
@@ -409,11 +420,7 @@ args_read() {
         #  Example: File/Directory parsing
         if [ $# -eq 1 ]; then
           #  Only one argument left
-          local lastarg="$(lib_core_expand_tilde "$1")"
-
-          # Check if file exists
-          lib_core_is --file "${lastarg}" && \
-          arg_file="${lastarg}"
+          arg_file="$(lib_core_expand_tilde "$1")"
         else
           #  More than one argument left
           #
@@ -594,7 +601,7 @@ ${par_lastarg} : ${txt_lastarg}"
 
   #  Print
   case "${arg_section}" in
-   ${ARG_SECTION_SYNOPSIS})
+    ${ARG_SECTION_SYNOPSIS})
       eval lib_msg_print_heading -111 \"\${LIB_SHTPL_${ID_LANG}_TXT_HELP_TTL_SYNOPSIS}\"
       printf "%s\n" "${synopsis}"
       ;;
@@ -831,7 +838,7 @@ init_check_post() {
 
 #===  FUNCTION  ================================================================
 #         NAME:  init_first
-#  DESCRIPTION:  Lock the script (PID file) or initialise instance counter,
+#  DESCRIPTION:  Lock the script (PID file) or initialize instance counter,
 #                set default log destination, and install trap handler
 #      OUTPUTS:  In case of ...
 #                  success : An info message with the script's PID to <syslog>
@@ -981,7 +988,7 @@ init_lang() {
 
 #===  FUNCTION  ================================================================
 #         NAME:  init_update
-#  DESCRIPTION:  Update global variables/constants and perform initialisation
+#  DESCRIPTION:  Update global variables/constants and perform initialization
 #                commands that should be executed after argument parsing
 #      OUTPUTS:  An error message to <stderr> and/or <syslog>
 #                in case an error occurs
@@ -1038,7 +1045,7 @@ main() {
   #   args_check        Check if passed arguments are valid
   #
   #   init_update       Update global variables/constants and perform
-  #                     initialisation commands that should be executed after
+  #                     initialization commands that should be executed after
   #                     argument parsing
   #
   #   init_check_post   Check script requirements (after argument parsing)
@@ -1912,7 +1919,7 @@ menu_arg_file() {
 
       dialog --title "${title}" --msgbox "${text1}" 0 0                       && \
       result="$(dialog --title "${title}"                                     \
-        --fselect "${result}" 0 0 2>&1 1>&3)"                                 && \
+        --fselect "${result:-${arg_file:-~/}}" 0 0 2>&1 1>&3)"                && \
       result="$(lib_core_expand_tilde "${result}")"                           || \
       exitcode="$?"
 
