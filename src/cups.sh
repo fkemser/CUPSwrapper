@@ -305,12 +305,31 @@ args_check() {
   #                                    \|||/
   #                                     \|/
   #-----------------------------------------------------------------------------
+
+  #-----------------------------------------------------------------------------
+  #  Check if mandatory arguments are set (daemon / script mode only)
+  #-----------------------------------------------------------------------------
+  #  Some arguments may not be listed here as <init_update()> may set their
+  #  default values.
+  #-----------------------------------------------------------------------------
+  if  [ "${arg_mode}" = "${ARG_MODE_DAEMON}" ] || \
+      [ "${arg_mode}" = "${ARG_MODE_SCRIPT}" ]; then
+    true
+  fi                                                                        && \
+
+  #-----------------------------------------------------------------------------
+  #  Check argument types / value ranges
+  #-----------------------------------------------------------------------------
+  #  For more available checks, please have a look at the functions
+  #  <lib_core_is()> and <lib_core_regex()> in '/lib/SHlib/lib/core.lib.sh'
+  #-----------------------------------------------------------------------------
   #-----------------------------------------------------------------------------
   #  arg_file
   #-----------------------------------------------------------------------------
   if lib_core_is --set "${arg_file}"; then
     lib_core_is --file "${arg_file}" || lib_shtpl_arg_error "arg_file"
   fi                                                                        || \
+
   #-----------------------------------------------------------------------------
   #                                     /|\
   #                                    /|||\
@@ -1705,7 +1724,7 @@ menu_add() {
     {
       # Set default settings
       menu_pr_options                                   && \
-      if lib_core_is --notempty "${pr_options}"; then
+      if lib_core_is --set "${pr_options}"; then
         lpoptions -p "${pr_queue}" ${pr_options}
       fi                                                && \
 
@@ -1745,7 +1764,7 @@ menu_default() {
 menu_defsettings() {
   menu_pr_queue                                                             && \
   menu_pr_options                                                           && \
-  if lib_core_is --notempty "${pr_options}"; then
+  if lib_core_is --set "${pr_options}"; then
     lpoptions -p "${pr_queue}" ${pr_options}
   fi
 }
@@ -1766,12 +1785,14 @@ menu_canceljob() {
   eval "text1=\${L_CUPS_${ID_LANG}_DLG_TXT_CANCELJOB_1}"
   eval "text2=\${L_CUPS_${ID_LANG}_DLG_TXT_CANCELJOB_2}"
 
+  # Let user select active print jobs
   menu_joblist                                                        || \
   return
 
   local exitcode="0"
   local msg
   if lib_core_is --set "${joblist}"; then
+    # Only if user has selected at least one active print job
     msg="$(cancel ${joblist} 2>&1)" && \
     dialog --no-collapse --title "${title1}" --msgbox "${text1}" 0 0
   fi                                                                  || \
@@ -1816,6 +1837,7 @@ menu_print() {
   eval "text1=\${L_CUPS_${ID_LANG}_DLG_TXT_PRINT_1}"
   eval "text2=\${L_CUPS_${ID_LANG}_DLG_TXT_PRINT_2}"
 
+  # Let user select printer, options and number of copies
   menu_pr_queue                                                             && \
   menu_pr_options                                                           && \
   menu_job_copies                                                           || \
@@ -1824,9 +1846,11 @@ menu_print() {
   local exitcode="0"
   local msg
   { if lib_core_is --set "${arg_file}"; then
+      # Print file
       msg="$(lp -d "${pr_queue}" -n "${job_copies}" ${pr_options} \
         "${arg_file}" 2>&1)"
     else
+      # Print text from <stdin> or a passed argument
       msg="$(printf "%s" "${arg_arg_or_stdin}" \
         | lp -d "${pr_queue}" -n "${job_copies}" ${pr_options} 2>&1)"
     fi
@@ -1988,21 +2012,21 @@ menu_joblist() {
   local result
   local exitcode="0"
   exec 3>&1
+    # Get list of active print jobs
     jobs="$(lpstat -o | tr -s ' ')"                                         && \
+  
+    # Do not continue if job list is empty ...
+    ( lib_core_is --set "${jobs}" || exit 9 )                               && \
+
+    # ... otherwise let the user select one or several print jobs
     alljobs="$(printf "%s" "${jobs}" | cut -d' ' -f1)"                      && \
     alljobs="$(lib_core_str_remove_newline "${alljobs}")"                   && \
-
     jobs="$(for a in ${jobs}; do
         tag="$(printf "%s" "$a" | cut -d' ' -f1)"
         item="$(printf "%s" "$a" | cut -d' ' -f2-)"
         status="off"
         printf "%s\n%s\n%s\n" "${tag}" "${item}" "${status}"
       done)"                                                                && \
-
-    lib_core_is --notempty "${jobs}" || \
-    { dialog --no-collapse --title "${title2}" --msgbox "${text2}" 0 0
-      false
-    }                                                                       && \
 
     result="$(dialog --extra-button --extra-label "${extra}"  \
       --title "${title1}" --checklist "${text1}" 0 0 0        \
@@ -2013,8 +2037,17 @@ menu_joblist() {
   IFS="$OLDIFS"
 
   case "${exitcode}" in
-    0) joblist="${result}" ;;
-    3) joblist="${alljobs}"; exitcode="0" ;;
+    0)
+      joblist="${result}"
+      ;;
+    3)
+      # Extra button pressed => Select all jobs
+      joblist="${alljobs}"; exitcode="0"
+      ;;
+    9)
+      # Show error message if job list is empty (see 'exit 9' above)
+      dialog --no-collapse --title "${title2}" --msgbox "${text2}" 0 0
+      ;;
   esac
 
   return ${exitcode}
@@ -2065,7 +2098,7 @@ menu_pr_devuri() {
         ${tag1})
           # OTHER
           result="$(dialog --title "${title}" --inputbox "${text2}" 0 0 \
-        "${pr_devuri}" 2>&1 1>&3)"
+            "${pr_devuri}" 2>&1 1>&3)"
           ;;
       esac                                                              || \
       exitcode="$?"
@@ -2192,8 +2225,14 @@ menu_pr_options() {
         *"-o ${opt}="*)
           # <result> already contains the option to be changed (<opt>)
           case "${val}" in
-            \**) result="$(printf "%s" "${result}" | sed -e "s/-o ${opt}=[^[:blank:]]*//")";;
-            *) result="$(printf "%s" "${result}" | sed -e "s/-o ${opt}=[^[:blank:]]*/-o ${opt}=${val}/")";;
+            \**)
+              # <val> is the (previous) default value => just remove <opt>=<val> pair
+              result="$(printf "%s" "${result}" | sed -e "s/-o ${opt}=[^[:blank:]]*//")"
+              ;;
+            *)
+              # <val> is not(!) the (previous) default value => replace <val>
+              result="$(printf "%s" "${result}" | sed -e "s/-o ${opt}=[^[:blank:]]*/-o ${opt}=${val}/")"
+              ;;
           esac
           ;;
         *)
@@ -2243,17 +2282,17 @@ menu_pr_ppd() {
   local OLDIFS="$IFS"
   local IFS="${LIB_C_STR_NEWLINE}"
 
+  local dlgpairs
   local result
   local exitcode="0"
   exec 3>&1
-    result="$(dialog --title "${title}" --menu "${text}" 0 0 0  \
-      $(for a in $(lpinfo -m | grep -i "${pr_model}"); do
+    dlgpairs="$(for a in $(lpinfo -m | grep -i "${pr_model}"); do
         tag="$(printf "%s" "$a" | cut -d' ' -f1)"
         item="$(printf "%s" "$a" | cut -d' ' -f2-)"
         printf "%s\n%s\n" "${tag}" "${item}"
-      done)                                                     \
-      "${tag1}" "${item1}"                                      \
-      2>&1 1>&3)"                                               || \
+      done)"                                                                && \
+    result="$(dialog --title "${title}" --menu "${text}" 0 0 0  \
+      ${dlgpairs} "${tag1}" "${item1}" 2>&1 1>&3)"                          || \
     exitcode="$?"
   exec 3>&-
 
@@ -2333,7 +2372,7 @@ menu_pr_queue() {
           #---------------------------------------------------------------------
           #  Modes where a printer queue has to exist before continuing
           #---------------------------------------------------------------------
-          lib_core_is --notempty "${queues}" || \
+          lib_core_is --set "${queues}" || \
           { dialog  --no-collapse --title "${title3}" --msgbox "${text3}" 0 0
             false
           }
@@ -2407,7 +2446,7 @@ menu_pr_queue() {
 
         *)
           #---------------------------------------------------------------------
-          #  Modes that request user to select an existing printer queu
+          #  Modes that request user to select an existing printer queue
           #---------------------------------------------------------------------
           result="$(dialog --title "${title}" --menu "${text2}" 0 0 0       \
             ${queues} 2>&1 1>&3)"
@@ -2416,7 +2455,7 @@ menu_pr_queue() {
       exitcode="$?"
 
       case "${exitcode}" in
-        0) if lib_core_is --notempty "${result}"; then break; fi ;;
+        0) if lib_core_is --set "${result}"; then break; fi ;;
         *) if lib_core_is --empty "${result}"; then break; fi ;;
       esac
     done
