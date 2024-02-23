@@ -312,9 +312,11 @@ args_check() {
   #  Some arguments may not be listed here as <init_update()> may set their
   #  default values.
   #-----------------------------------------------------------------------------
-  if  [ "${arg_mode}" = "${ARG_MODE_DAEMON}" ] || \
-      [ "${arg_mode}" = "${ARG_MODE_SCRIPT}" ]; then
-    true
+  if  [ "${arg_action}" != "${ARG_ACTION_HELP}" ]; then
+    case "${arg_mode}" in
+      ${ARG_MODE_DAEMON}) ;;
+      ${ARG_MODE_SCRIPT}) ;;
+    esac    
   fi                                                                        && \
 
   #-----------------------------------------------------------------------------
@@ -376,7 +378,7 @@ args_read() {
       #  PARAMETER (TEMPLATE)
       #-------------------------------------------------------------------------
       #  Script actions <ARG_ACTION_...>
-      -h|--help) arg_action="${ARG_ACTION_HELP}"; break;;
+      -h|--help) arg_action="${ARG_ACTION_HELP}"; break ;;
 
       #  Script operation modes <ARG_MODE_...>
       --submenu)
@@ -955,9 +957,9 @@ init_lang() {
   #                                     \|/
   #-----------------------------------------------------------------------------
   case "${ID_LANG}" in
-    ${LIB_C_ID_LANG_EN}) readonly ID_LANG="${LIB_C_ID_L_EN}";;
-    ${LIB_C_ID_LANG_DE}) readonly ID_LANG="${LIB_C_ID_L_DE}";;
-    *) readonly ID_LANG="${LIB_C_ID_L_EN}";;
+    ${LIB_C_ID_LANG_EN}) readonly ID_LANG="${LIB_C_ID_L_EN}" ;;
+    ${LIB_C_ID_LANG_DE}) readonly ID_LANG="${LIB_C_ID_L_DE}" ;;
+    *) readonly ID_LANG="${LIB_C_ID_L_EN}" ;;
   esac
   #-----------------------------------------------------------------------------
   #                                     /|\
@@ -1096,9 +1098,9 @@ main() {
 
   # Run mode-specific subfunctions
   case "${arg_mode}" in
-    ${ARG_MODE_DAEMON}) main_daemon;;
-    ${ARG_MODE_INTERACTIVE}|${ARG_MODE_INTERACTIVE_SUBMENU}) main_interactive || return $?;;
-    ${ARG_MODE_SCRIPT}) main_script;;
+    ${ARG_MODE_DAEMON}) main_daemon ;;
+    ${ARG_MODE_INTERACTIVE}|${ARG_MODE_INTERACTIVE_SUBMENU}) main_interactive || return $? ;;
+    ${ARG_MODE_SCRIPT}) main_script ;;
   esac
 }
 
@@ -1281,9 +1283,9 @@ run() {
     #---------------------------------------------------------------------------
     #  TEMPLATE - DO NOT EDIT
     #---------------------------------------------------------------------------
-    ${ARG_ACTION_ABOUT})        lib_shtpl_about --dialog;;
-    ${ARG_ACTION_EXIT})         clear; exit;;
-    ${ARG_ACTION_HELP})         help;;
+    ${ARG_ACTION_ABOUT})        lib_shtpl_about --dialog ;;
+    ${ARG_ACTION_EXIT})         clear; exit ;;
+    ${ARG_ACTION_HELP})         help ;;
 
     #---------------------------------------------------------------------------
     #  CUSTOM
@@ -1295,13 +1297,13 @@ run() {
     #                                   \|||/
     #                                    \|/
     #---------------------------------------------------------------------------
-    ${ARG_ACTION_ADD})          menu_add;;
-    ${ARG_ACTION_CANCELJOB})    menu_canceljob;;
-    ${ARG_ACTION_DEFAULT})      menu_default;;
-    ${ARG_ACTION_DEFSETTINGS})  menu_defsettings;;
-    ${ARG_ACTION_JOBSETTINGS})  menu_jobsettings;;
-    ${ARG_ACTION_PRINT})        menu_print;;
-    ${ARG_ACTION_REMOVE})       menu_remove;;
+    ${ARG_ACTION_ADD})          menu_add ;;
+    ${ARG_ACTION_CANCELJOB})    menu_canceljob ;;
+    ${ARG_ACTION_DEFAULT})      menu_default ;;
+    ${ARG_ACTION_DEFSETTINGS})  menu_defsettings ;;
+    ${ARG_ACTION_JOBSETTINGS})  menu_jobsettings ;;
+    ${ARG_ACTION_PRINT})        menu_print ;;
+    ${ARG_ACTION_REMOVE})       menu_remove ;;
     #---------------------------------------------------------------------------
     #                                    /|\
     #                                   /|||\
@@ -1464,8 +1466,8 @@ trap_main() {
     # as they may run in background (asynchronously).
     local sub_signal
     case "${arg_signal}" in
-      INT|QUIT) sub_signal="TERM";;
-      *)        sub_signal="${arg_signal}";;
+      INT|QUIT) sub_signal="TERM" ;;
+      *)        sub_signal="${arg_signal}" ;;
     esac
 
     # Kill subshells / child processes
@@ -1497,11 +1499,11 @@ trap_main() {
   case "${arg_signal}" in
     EXIT)
       # ... EXIT
-      exit;;
+      exit ;;
     *)
       # ... other signals:
       # Clear EXIT trap handling, otherwise <trap_main()> would run again.
-      trap - EXIT; exit 1;;
+      trap - EXIT; exit 1 ;;
   esac
 }
 
@@ -1583,7 +1585,7 @@ menu_main() {
 
   #  Default actions do not depend on any further parameter
   case "${arg_action}" in
-    ${ARG_ACTION_ABOUT}|${ARG_ACTION_EXIT}|${ARG_ACTION_HELP}) return;;
+    ${ARG_ACTION_ABOUT}|${ARG_ACTION_EXIT}|${ARG_ACTION_HELP}) return ;;
   esac                                                                      && \
   #-----------------------------------------------------------------------------
   #                    DONE: DEFINE YOUR MENU HANDLING HERE
@@ -1666,18 +1668,18 @@ menu_add() {
     # Set model
     { while { pr_model=""; menu_pr_model || return 1; }; do
         case "${pr_model}" in
-          ${PR_MODEL_DRIVERLESS}|${PR_MODEL_EVERYWHERE}|${PR_MODEL_RAW}) break;;
+          ${PR_MODEL_DRIVERLESS}|${PR_MODEL_EVERYWHERE}|${PR_MODEL_RAW}) break ;;
           *)
             case "${pr_model}" in
               ${PR_MODEL_PPD_GENERIC_STR})
-                pr_model="${PR_MODEL_PPD_GENERIC_PPD}";;
+                pr_model="${PR_MODEL_PPD_GENERIC_PPD}" ;;
             esac                                                            && \
 
             # Set PPD file
             menu_pr_ppd                                                     && \
             case "${pr_ppd}" in
               ${PR_PPD_OTHER}) ;;
-              *) break;;
+              *) break ;;
             esac
             ;;
         esac                                                                || \
@@ -1785,7 +1787,7 @@ menu_canceljob() {
   eval "text1=\${L_CUPS_${ID_LANG}_DLG_TXT_CANCELJOB_1}"
   eval "text2=\${L_CUPS_${ID_LANG}_DLG_TXT_CANCELJOB_2}"
 
-  # Let user select active print jobs
+  # Request user to select active print jobs
   menu_joblist                                                        || \
   return
 
@@ -1837,7 +1839,7 @@ menu_print() {
   eval "text1=\${L_CUPS_${ID_LANG}_DLG_TXT_PRINT_1}"
   eval "text2=\${L_CUPS_${ID_LANG}_DLG_TXT_PRINT_2}"
 
-  # Let user select printer, options and number of copies
+  # Request user to select printer, printing options, and number of job copies
   menu_pr_queue                                                             && \
   menu_pr_options                                                           && \
   menu_job_copies                                                           || \
@@ -1950,7 +1952,7 @@ menu_arg_file() {
       # Check if file exists
       case "${exitcode}" in
         0) if lib_core_is --file "${result}"; then break; fi ;;
-        *) break;;
+        *) break ;;
       esac
     done
   exec 3>&-
@@ -2014,11 +2016,11 @@ menu_joblist() {
   exec 3>&1
     # Get list of active print jobs
     jobs="$(lpstat -o | tr -s ' ')"                                         && \
-  
+
     # Do not continue if job list is empty ...
     ( lib_core_is --set "${jobs}" || exit 9 )                               && \
 
-    # ... otherwise let the user select one or several print jobs
+    # ... otherwise request user to select one or several print jobs
     alljobs="$(printf "%s" "${jobs}" | cut -d' ' -f1)"                      && \
     alljobs="$(lib_core_str_remove_newline "${alljobs}")"                   && \
     jobs="$(for a in ${jobs}; do
@@ -2239,7 +2241,7 @@ menu_pr_options() {
           # <opt> has not been changed yet
           case "${val}" in
             \**) ;;
-            *) result="${result}${result:+ }-o ${opt}=${val}";;
+            *) result="${result}${result:+ }-o ${opt}=${val}" ;;
           esac
           ;;
       esac                                                                  || \
