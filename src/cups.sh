@@ -312,11 +312,18 @@ args_check() {
   #  Some arguments may not be listed here as <init_update()> may set their
   #  default values.
   #-----------------------------------------------------------------------------
-  if  [ "${arg_action}" != "${ARG_ACTION_HELP}" ]; then
-    case "${arg_mode}" in
-      ${ARG_MODE_DAEMON}) ;;
-      ${ARG_MODE_SCRIPT}) ;;
-    esac    
+  if    [ "${arg_action}" != "${ARG_ACTION_HELP}" ] && \
+        [ "${arg_mode}" = "${ARG_MODE_DAEMON}" ]; then
+
+    # Daemon mode
+    true
+
+  elif  [ "${arg_action}" != "${ARG_ACTION_HELP}" ] && \
+        [ "${arg_mode}" = "${ARG_MODE_SCRIPT}" ]; then
+  
+    # Script mode
+    true
+  
   fi                                                                        && \
 
   #-----------------------------------------------------------------------------
