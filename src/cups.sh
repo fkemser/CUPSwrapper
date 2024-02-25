@@ -199,7 +199,8 @@ pr_queue=""
 #                                      \|/
 #-------------------------------------------------------------------------------
 # Interactive mode / Submenu mode
-readonly ARG_ACTION_LIST_INTERACTIVE="ADD CANCELJOB DEFAULT DEFSETTINGS REMOVE PRINT"
+readonly ARG_ACTION_LIST_INTERACTIVE="\
+ADD CANCELJOB DEFAULT DEFSETTINGS REMOVE PRINT"
 # Classic script mode
 readonly ARG_ACTION_LIST_SCRIPT="HELP JOBSETTINGS PRINT"
 #-------------------------------------------------------------------------------
@@ -234,7 +235,8 @@ readonly LIST_ARG=""
 #  To assign a default value to a parameter please define a constant (above)
 #  with the suffix '_DEFAULT', e.g. <ARG_STR_DEFAULT> for <arg_str>.
 #  !!! Use the variable's name as defined, so usually lowercase letters !!!
-readonly LIST_ARG_CLEANUP_INTERACTIVE="joblist pr_devuri pr_model pr_options pr_ppd pr_queue"
+readonly LIST_ARG_CLEANUP_INTERACTIVE="\
+arg_arg_or_stdin arg_file joblist pr_devuri pr_model pr_options pr_ppd pr_queue"
 #-------------------------------------------------------------------------------
 #                                      /|\
 #                                     /|||\
@@ -2022,41 +2024,35 @@ menu_joblist() {
   local exitcode="0"
   exec 3>&1
     # Get list of active print jobs
-    jobs="$(lpstat -o | tr -s ' ')"                                         && \
-
-    # Do not continue if job list is empty ...
-    ( lib_core_is --set "${jobs}" || exit 9 )                               && \
-
-    # ... otherwise request user to select one or several print jobs
+    { jobs="$(lpstat -o | tr -s ' ')" && \
+      lib_core_is --set "${jobs}"     || \
+      { dialog --no-collapse --title "${title2}" --msgbox "${text2}" 0 0
+        false
+      }
+    }                                                                       && \
     alljobs="$(printf "%s" "${jobs}" | cut -d' ' -f1)"                      && \
     alljobs="$(lib_core_str_remove_newline "${alljobs}")"                   && \
+
+    # Request user to select one or several print jobs
     jobs="$(for a in ${jobs}; do
         tag="$(printf "%s" "$a" | cut -d' ' -f1)"
         item="$(printf "%s" "$a" | cut -d' ' -f2-)"
         status="off"
         printf "%s\n%s\n%s\n" "${tag}" "${item}" "${status}"
       done)"                                                                && \
-
     result="$(dialog --extra-button --extra-label "${extra}"  \
       --title "${title1}" --checklist "${text1}" 0 0 0        \
       ${jobs} 2>&1 1>&3)"                                                   || \
+
     exitcode="$?"
   exec 3>&-
 
   IFS="$OLDIFS"
 
+  # 3: Extra button pressed => Select all jobs
   case "${exitcode}" in
-    0)
-      joblist="${result}"
-      ;;
-    3)
-      # Extra button pressed => Select all jobs
-      joblist="${alljobs}"; exitcode="0"
-      ;;
-    9)
-      # Show error message if job list is empty (see 'exit 9' above)
-      dialog --no-collapse --title "${title2}" --msgbox "${text2}" 0 0
-      ;;
+    0)  joblist="${result}" ;;
+    3)  joblist="${alljobs}"; exitcode="0" ;;
   esac
 
   return ${exitcode}
