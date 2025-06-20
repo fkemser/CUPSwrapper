@@ -162,8 +162,7 @@ In case the menu is empty you may need additional drivers. For more information 
 #-------------------------------------------------------------------------------
 readonly L_CUPS_EN_DLG_TTL_PR_OPTIONS="Printing Options"
 readonly L_CUPS_EN_DLG_TXT_PR_OPTIONS_1="Please choose the option that you would like to edit. To save your changes and continue please choose '${LIB_SHTPL_DLG_TAG_EXIT}' at the beginning/end of the list."
-readonly L_CUPS_EN_DLG_TXT_PR_OPTIONS_2="Please choose one of the following values.
-(An asterisk ('*') indicates that this is the option's current default value.)"
+readonly L_CUPS_EN_DLG_TXT_PR_OPTIONS_2="Please choose one of the following values. An asterisk ('*') indicates that this is the option's current default value."
 readonly L_CUPS_EN_DLG_TXT_PR_OPTIONS_31="\
 ==================
  Changed Settings

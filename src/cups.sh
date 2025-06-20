@@ -1967,7 +1967,7 @@ menu_arg_file() {
 
       dialog --title "${title}" --msgbox "${text1}" 0 0                       && \
       result="$(dialog --title "${title}"                                     \
-        --fselect "${result:-${arg_file:-~/}}" 0 0 2>&1 1>&3)"                && \
+        --fselect "${result:-${arg_file:-$HOME/}}" 0 0 2>&1 1>&3)"            && \
       result="$(lib_core_expand_tilde "${result}")"                           || \
       exitcode="$?"
 

@@ -53,7 +53,7 @@
 
 
 <!-- TABLE OF CONTENTS -->
-<details>
+<details open>
   <summary>Table of Contents</summary>
   <ol>
     <li>
@@ -63,8 +63,9 @@
         <li><a href="#testing-environment">Testing Environment</a></li>
       </ul>
     </li>
+    <li><a href="#tldr"><b>TL;DR</b></a></li>
     <li>
-      <a href="#getting-started">Getting Started</a>
+      <a href="#getting-started"><b>Getting Started</b></a>
       <ul>
         <li>
           <a href="#prerequisites">Prerequisites</a>
@@ -82,7 +83,7 @@
         <li><a href="#installation">Installation</a></li>
       </ul>
     </li>
-    <li><a href="#usage-srccupssh">Usage (/src/cups.sh)</a></li>
+    <li><a href="#usage-srccupssh"><b>Usage (/src/cups.sh)</b></a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
@@ -96,21 +97,16 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-This project provides a `dialog`-based interface to
-
-- set up a printer,  
 ![Screenshot 1][screenshot1]
 
+This project provides a `dialog`-based interface to
+
+- set up a printer,
 - select a default printer,
 - set default printing settings,
-- print a document (or `stdin` input), allowing the user to interactively choose printer and printing settings,  
-![Screenshot 2][screenshot2]
-
-- create print job settings (`lp` arguments) that can be saved into a variable for multiple usage,  
-![Screenshot 3][screenshot3]
-
-- cancel print jobs.  
-![Screenshot 4][screenshot4]
+- print a document (or `stdin` input), allowing the user to interactively choose printer and printing settings,
+- create print job settings (`lp` arguments) that can be saved into a variable for multiple usage,
+- cancel print jobs.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -139,6 +135,46 @@ Packages | [avahi-daemon (0.8-10)](https://packages.debian.org/bookworm/avahi-da
 || [dialog (1.3-20230209-1)](https://packages.debian.org/bookworm/dialog)
 || [libc-bin (2.36-9+deb12u3)](https://packages.debian.org/bookworm/libc-bin)
 || [printer-driver-all (0.20210903)](https://packages.debian.org/bookworm/printer-driver-all)
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+
+<!-- TL;DR -->
+## TL;DR
+
+### 1. Install dependencies
+To install all (necessary and optional) packages on your system, simply run:
+
+#### Alpine Linux
+```sh
+echo "https://dl-cdn.alpinelinux.org/alpine/v$(cut -d'.' -f1,2 /etc/alpine-release)/community/" | sudo tee -a /etc/apk/repositories
+echo "@testing http://dl-cdn.alpinelinux.org/alpine/edge/testing/" | sudo tee -a /etc/apk/repositories
+sudo apk update && \
+sudo apk add avahi dialog cups cups-filters cups-pdf@testing gutenprint-cups@testing
+```
+
+#### Debian
+```sh
+sudo apt install avahi-daemon dialog cups printer-driver-all
+```
+
+### 2. Change OS Settings
+The current user must be a member of the 'lpadmin' group:
+
+```sh
+sudo usermod -a -G lpadmin $(id -un)
+```
+
+#### Windows Subsystem for Linux (WSL) Users Only
+Please make sure that `systemd` is enabled as the default system/session manager. For more information please have a look at: https://learn.microsoft.com/en-us/windows/wsl/systemd
+
+### 3. Clone the repo and run the script
+```sh
+git clone --recurse-submodules https://github.com/fkemser/CUPSwrapper.git && \
+chmod +x ./CUPSwrapper/src/cups.sh && \
+./CUPSwrapper/src/cups.sh
+```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -203,6 +239,10 @@ Please make sure that `systemd` is enabled as the default system/session manager
 
 <!-- USAGE EXAMPLES -->
 ## Usage (/src/cups.sh)
+
+To call the script **interactively**, run `/src/cups.sh` (without further arguments) from your terminal.
+
+For **script mode** run `/src/cups.sh` followed by a list of arguments `--arg1 [<val1>] --arg2 [<val2>] ...`. To get help, run `/src/cups.sh -h`.
 
 ```sh
 ================================================================================
@@ -323,10 +363,7 @@ Project Link: [https://github.com/fkemser/CUPSwrapper](https://github.com/fkemse
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/linkedin_username
 
-[screenshot1]: res/screenshot1.gif
-[screenshot2]: res/screenshot2.gif
-[screenshot3]: res/screenshot3.gif
-[screenshot4]: res/screenshot4.gif
+[screenshot1]: res/screenshot1.png
 
 [LaTeX-shield]: https://img.shields.io/badge/latex-%23008080.svg?style=for-the-badge&logo=latex&logoColor=white
 [LaTeX-url]: https://www.latex-project.org/
