@@ -65,7 +65,7 @@
     </li>
     <li><a href="#tldr"><b>TL;DR</b></a></li>
     <li>
-      <a href="#getting-started"><b>Getting Started</b></a>
+      <a href="#getting-started">Getting Started</a>
       <ul>
         <li>
           <a href="#prerequisites">Prerequisites</a>
