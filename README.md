@@ -50,12 +50,13 @@
   </p>
 </div>
 
-
+<p align="center"><img src="res/screenshot1.png" alt="screenshot1" width="75%"/></p>
 
 <!-- TABLE OF CONTENTS -->
 <details open>
   <summary>Table of Contents</summary>
   <ol>
+    <li><a href="#tldr">TL;DR</a></li>
     <li>
       <a href="#about-the-project">About The Project</a>
       <ul>
@@ -63,7 +64,6 @@
         <li><a href="#testing-environment">Testing Environment</a></li>
       </ul>
     </li>
-    <li><a href="#tldr"><b>TL;DR</b></a></li>
     <li>
       <a href="#getting-started">Getting Started</a>
       <ul>
@@ -83,7 +83,7 @@
         <li><a href="#installation">Installation</a></li>
       </ul>
     </li>
-    <li><a href="#usage-srccupssh"><b>Usage (/src/cups.sh)</b></a></li>
+    <li><a href="#usage-srccupssh">Usage (/src/cups.sh)</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
@@ -91,52 +91,6 @@
     <li><a href="#acknowledgments">Acknowledgments</a></li>
   </ol>
 </details>
-
-
-
-<!-- ABOUT THE PROJECT -->
-## About The Project
-
-![Screenshot 1][screenshot1]
-
-This project provides a `dialog`-based interface to
-
-- set up a printer,
-- select a default printer,
-- set default printing settings,
-- print a document (or `stdin` input), allowing the user to interactively choose printer and printing settings,
-- create print job settings (`lp` arguments) that can be saved into a variable for multiple usage,
-- cancel print jobs.
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-### Built With
-
-[![Shell Script][Shell Script-shield]][Shell Script-url]
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-### Testing Environment
-
-The project has been developed and tested on the following system:
-
-| Info | Description
----: | ---
-OS | Debian GNU/Linux 12 (bookworm)
-Kernel | 5.15.133.1-microsoft-standard-WSL2
-Packages | [avahi-daemon (0.8-10)](https://packages.debian.org/bookworm/avahi-daemon)
-|| [coreutils (9.1-1)](https://packages.debian.org/bookworm/coreutils)
-|| [cups (2.4.2-3+deb12u5)](https://packages.debian.org/bookworm/cups)
-|| [dash (0.5.12-2)](https://packages.debian.org/bookworm/dash)
-|| [dialog (1.3-20230209-1)](https://packages.debian.org/bookworm/dialog)
-|| [libc-bin (2.36-9+deb12u3)](https://packages.debian.org/bookworm/libc-bin)
-|| [printer-driver-all (0.20210903)](https://packages.debian.org/bookworm/printer-driver-all)
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 
 
@@ -175,6 +129,52 @@ git clone --recurse-submodules https://github.com/fkemser/CUPSwrapper.git && \
 chmod +x ./CUPSwrapper/src/cups.sh && \
 ./CUPSwrapper/src/cups.sh
 ```
+
+For more information please have a look at the [usage section](#usage-srccupssh).
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+
+<!-- ABOUT THE PROJECT -->
+## About The Project
+
+This project provides a `dialog`-based interface to
+
+- set up a printer,
+- select a default printer,
+- set default printing settings,
+- print a document (or `stdin` input), allowing the user to interactively choose printer and printing settings,
+- create print job settings (`lp` arguments) that can be saved into a variable for multiple usage,
+- cancel print jobs.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+
+### Built With
+
+[![Shell Script][Shell Script-shield]][Shell Script-url]
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+
+
+### Testing Environment
+
+The project has been developed and tested on the following system:
+
+| Info | Description
+---: | ---
+OS | Debian GNU/Linux 12 (bookworm)
+Kernel | 5.15.133.1-microsoft-standard-WSL2
+Packages | [avahi-daemon (0.8-10)](https://packages.debian.org/bookworm/avahi-daemon)
+|| [coreutils (9.1-1)](https://packages.debian.org/bookworm/coreutils)
+|| [cups (2.4.2-3+deb12u5)](https://packages.debian.org/bookworm/cups)
+|| [dash (0.5.12-2)](https://packages.debian.org/bookworm/dash)
+|| [dialog (1.3-20230209-1)](https://packages.debian.org/bookworm/dialog)
+|| [libc-bin (2.36-9+deb12u3)](https://packages.debian.org/bookworm/libc-bin)
+|| [printer-driver-all (0.20210903)](https://packages.debian.org/bookworm/printer-driver-all)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
