@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# SPDX-FileCopyrightText: Copyright (c) 2022-2024 Florian Kemser and the CUPSwrapper contributors
+# SPDX-FileCopyrightText: Copyright (c) 2022-2025 Florian Kemser and the CUPSwrapper contributors
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
 #===============================================================================
@@ -11,7 +11,7 @@
 #                 (This is a constant file, so please do NOT run it.)
 #
 #  DESCRIPTION:   --German-- String Constants File for '/src/cups.sh'
-#                 Used to generate help texts, interactive dialogues,
+#                 Used to generate help texts, interactive dialogs,
 #                 and other terminal/log messages.
 #
 #         BUGS:   ---
