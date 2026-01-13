@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# SPDX-FileCopyrightText: Copyright (c) 2022-2025 Florian Kemser and the CUPSwrapper contributors
+# SPDX-FileCopyrightText: Copyright (c) 2022-2026 Florian Kemser and the CUPSwrapper contributors
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
 #===============================================================================
@@ -180,7 +180,7 @@ readonly L_CUPS_ABOUT_RUN="./$(basename "$0")"
 readonly L_CUPS_ABOUT_VERSION="1.0.0"
 
 #  (Optional) Project year(s), e.g. '2023', '2023-2024'
-readonly L_CUPS_ABOUT_YEARS="2022-2025"
+readonly L_CUPS_ABOUT_YEARS="2022-2026"
 
 #===============================================================================
 #  PARAMETER (TEMPLATE) - DO NOT EDIT
