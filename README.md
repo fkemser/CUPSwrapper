@@ -70,8 +70,8 @@
         <li>
           <a href="#prerequisites">Prerequisites</a>
           <ul>
-            <li><a href="#alpine-linux">Alpine Linux</a></li>
-            <li><a href="#debian">Debian</a></li>
+            <li><a href="#alpine-linux-1">Alpine Linux</a></li>
+            <li><a href="#debian-1">Debian</a></li>
           </ul>
         </li>
         <li>
@@ -130,7 +130,7 @@ chmod +x ./CUPSwrapper/src/cups.sh && \
 ./CUPSwrapper/src/cups.sh
 ```
 
-For more information please have a look at the [usage section](#usage-srccupssh).
+> :information_source: For more information please have a look at the [usage section](#usage-srccupssh).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -196,10 +196,12 @@ Below you can find distribution-specific installation instructions.
 
 #### Alpine Linux
 ```sh
-# Required
+# Add repositories
 echo "https://dl-cdn.alpinelinux.org/alpine/v$(cut -d'.' -f1,2 /etc/alpine-release)/community/" | sudo tee -a /etc/apk/repositories
 echo "@testing http://dl-cdn.alpinelinux.org/alpine/edge/testing/" | sudo tee -a /etc/apk/repositories
 sudo apk update
+
+# Required
 sudo apk add avahi cups cups-filters cups-pdf@testing dialog
 
 # Optional
